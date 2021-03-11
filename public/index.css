@@ -1,0 +1,66 @@
+:root {
+    --game-size: 1000px;
+    --rows: 10;
+    --cols: 20;
+  }
+
+* {
+    margin: 0;
+    padding: 0;
+  }
+
+  .fa-bomb {
+      color: #c90000
+  }
+
+
+  body {
+      background: #111;
+      color: #eee;
+      font-family: 'Quicksand', sans-serif;
+  }
+
+  .container {
+      display: flex;
+      flex-direction: column;
+      margin: 0 auto;
+      width: 1020px;
+  }
+
+  header, footer, main {
+      background:  #333;
+      padding: 10px;
+  }
+
+  main {
+      margin: 50px 0;  
+  }
+
+  .game, .row {
+      width:  var(--game-size);
+      display: flex;
+  }
+
+  .game {
+      flex-direction: column;
+  }
+
+  .row {
+      flex-direction: row;
+  }
+
+  .square {
+      color: #121212;
+      background: #777;
+      border: 1px solid #555;
+      height: calc(var(--game-size) / var(--cols));
+      width: calc(var(--game-size) / var(--cols));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+  }
+
+  .square:hover {
+      background: #888;
+      cursor: pointer;
+  }
