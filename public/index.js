@@ -1,56 +1,40 @@
 
-let board = [];
-
-const countNeighborsWithBombs = (i, j) => {
-    let count = 0;
-
-    console.log(i,j);
-
-    if(i < 10-1 &&  board[i+1][j].bomb)     
-        count++;
-    if(j < 20-1 && board[i][j+1].bomb)     
-        count++;
-    if(i < 10-1 && j < 20-1  && board[i+1][j+1].bomb)     
-        count++;
-    if(j > 0  && board[i][j-1].bomb)     
-        count++;
-    if(i > 0 && board[i-1][j].bomb)     
-        count++;
-    if(j < 20-1 && i > 0 &&  board[i-1][j+1].bomb)     
-        count++;
-    if(i > 0 && j > 0  && board[i-1][j-1].bomb)     
-        count++;
-    if(j > 0 && i < 10-1  && board[i+1][j-1].bomb)     
-        count++;
-
-    return count;
-}
+const ROWS = 10;
+const COLS = 20;
+const BOMB_CHANCE_PERCENTAGE = 25;
+const EXACT_NUMBER_OF_BOMBS = true;
+const board = [];
+let game;
 
 const createBoard = () => {
-    const game = document.getElementById("game");
-    for(let i = 0; i < 10; i++) {
+    let numBombs = 0;
+    const maxNumOfBombs = Math.round(ROWS*COLS*0.01*BOMB_CHANCE_PERCENTAGE);
+    for(let i = 0; i < ROWS; i++) {
         const divRow = document.createElement("div");
 
         board[i] = [];
-        for(let j = 0; j < 20; j++) {
-            const square = document.createElement("span");  
+        for(let j = 0; j < COLS; j++) {
+            const spanSquare = document.createElement("span");  
 
-            square.setAttribute("class", "square"); 
-            square.setAttribute("data-row", i);
-            square.setAttribute("data-col", j);
+            spanSquare.setAttribute("class", "square"); 
+            spanSquare.setAttribute("data-row", i);
+            spanSquare.setAttribute("data-col", j);
       
-            divRow.appendChild(square);  
+            divRow.appendChild(spanSquare);  
 
-            let data = {
-                bomb: Math.floor(Math.random() * 100) > 50 
-            };
-            
-            board[i][j] = data;
+            let hasBomb;
+            if(EXACT_NUMBER_OF_BOMBS)
+                hasBomb = numBombs < maxNumOfBombs && Math.floor(Math.random() * 100) >= (100 - BOMB_CHANCE_PERCENTAGE);
+            else
+                hasBomb = Math.floor(Math.random() * 100) >= (100 - BOMB_CHANCE_PERCENTAGE);
 
-            if(data.bomb) {
-                let bomb = document.createElement("i");
-                bomb.setAttribute("class", "fa fa-bomb");
-                square.appendChild(bomb);
+            board[i][j] = {bomb: hasBomb};
+
+            if(hasBomb) {
+                const iBomb = document.createElement("i");
+                iBomb.setAttribute("class", "fa fa-bomb");
+                spanSquare.appendChild(iBomb);
+                numBombs++;
             }
         }
 
@@ -58,22 +42,57 @@ const createBoard = () => {
         game.appendChild(divRow); 
     } 
 
-    console.log(board);
+    console.log(`Bombs: ${BOMB_CHANCE_PERCENTAGE}% (expected)`);
+    console.log(`Bombs: ${Math.round(numBombs / (ROWS*COLS) * 100)}% (actual)`);
 
-    for(let i = 0; i < 10; i++) {     
-        for(let j = 0; j < 20; j++) {
-            if(!board[i][j].bomb) {
-                board[i][j].nearbyBombs = countNeighborsWithBombs(i,j);
-                let square =  document.querySelector("span[data-row='" + i +"'][data-col='" + j + "']");
-                square.setAttribute("data-n", board[i][j].nearbyBombs);
-                square.innerHTML = board[i][j].nearbyBombs;
-            }
+    calculateNeighborsWithBombs();  
+}
+
+const forEachCell = (innerFunc) => {
+    for (let i = 0; i < ROWS; i++) {
+        for (let j = 0; j < COLS; j++) {
+            innerFunc(board[i][j], i, j);
         }
-    }  
+    }
+}
+
+const calculateNeighborsWithBombs = () => {
+    forEachCell((cell,i,j) => {
+        if (!cell.bomb) {
+            cell.nearbyBombs = countNeighborsWithBombs(i, j);
+            let square = document.querySelector(`span[data-row='${i}'][data-col='${j}']`);
+            square.setAttribute("data-n", cell.nearbyBombs);
+            square.innerHTML = cell.nearbyBombs;  
+        }  
+    })
+}
+
+const countNeighborsWithBombs = (i, j) => {
+    let count = 0;
+
+    if(i < ROWS-1 &&  board[i+1][j].bomb)     
+        count++;
+    if(j < COLS-1 && board[i][j+1].bomb)     
+        count++;
+    if(i < ROWS-1 && j < COLS-1  && board[i+1][j+1].bomb)     
+        count++;
+    if(j > 0  && board[i][j-1].bomb)     
+        count++;
+    if(i > 0 && board[i-1][j].bomb)     
+        count++;
+    if(j < COLS-1 && i > 0 &&  board[i-1][j+1].bomb)     
+        count++;
+    if(i > 0 && j > 0  && board[i-1][j-1].bomb)     
+        count++;
+    if(j > 0 && i < ROWS-1  && board[i+1][j-1].bomb)     
+        count++;
+
+    return count;
 }
 
 const setup = (e) => {
     console.log("setup");
+    game = document.getElementById("game");
     createBoard();
 }
 
