@@ -3,13 +3,6 @@
     --rows: 10;
     --cols: 20;
 
-    /* CSS HEX */
-    --russian-violet: #441151ff;
-    --sweet-brown: #a63d40ff;
-    --gold-crayola: #e9b872ff;
-    --asparagus: #90a959ff;
-    --air-superiority-blue: #6494aaff;
-
     --red-salsa: #f94144ff;
     --orange-red: #f3722cff;
     --yellow-orange-color-wheel: #f8961eff;
@@ -25,6 +18,7 @@
 * {
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
   }
 
   .fa-bomb {
@@ -67,21 +61,26 @@
       flex-direction: row;
   }
 
-  .square {
-      color: #fff;
-      background: #111;
+  .clickable {
       border: 1px solid #555;
       height: calc(var(--game-size) / var(--cols));
+      width: calc(var(--game-size) / var(--cols));
+  }
+ 
+.clickable:hover {
+    background: #888;
+    cursor: pointer;
+}
+
+.square {
+    color: #fff;
+    background: #111;
+    height: calc(var(--game-size) / var(--cols));
       width: calc(var(--game-size) / var(--cols));
       display: flex;
       align-items: center;
       justify-content: center;
-  }
-
-  .square:hover {
-      background: #888;
-      cursor: pointer;
-  }
+}
 
   .square[data-n='1'] {
     background: var(--cg-blue);  
@@ -110,10 +109,14 @@
 
   .square[data-n='7'] {
     color:#000;
-  background: var(--mango-tango);  
+    background: var(--mango-tango);  
 }
 
 .square[data-n='8'] {
     color:#000;
-  background: var(--orange-red);  
+    background: var(--orange-red);  
+}
+
+.square.hidden {
+    visibility: hidden;
 }
